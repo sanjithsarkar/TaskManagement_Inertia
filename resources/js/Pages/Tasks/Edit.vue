@@ -6,7 +6,7 @@ import PrimaryButton from '@/Components/PrimaryButton.vue';
 import TextInput from '@/Components/TextInput.vue';
 import { Link } from '@inertiajs/vue3';
 import { ref } from 'vue';
-
+import { usePage } from '@inertiajs/vue3'
 
 const props = defineProps({
     users: Object,
@@ -38,13 +38,14 @@ function updateTask() {
             _method: 'put',
             ...form.data()
 
-        }, {
-        onSuccess: () => {
-            // Clear the input after successful form submission
-            document.getElementById('comment').value = '';
-        },
-    })
+        },{
+            onSuccess: () => {
+                // Clear the input after successful form submission
+                document.getElementById('comment').value = '';
+            },
+        })
 }
+
 
 const timestamp = props.task.created_at;
 const date = new Date(timestamp);
@@ -71,9 +72,14 @@ const formattedDate = `${day}-${month}-${year}`;
                     <h3 class="ml-64 inline text-2xl font-extrabold font-serif h-16 items-center"> Update Task</h3>
                 </div>
 
+                <div v-if="$page.props.flash.message"
+                    class="fixed top-24 left-1/2 transform -translate-x-1/2 -translate-y-1/2 h-10 w-72 flex justify-center items-center bg-green-600 text-white rounded-md shadow-lg">
+                    {{ $page.props.flash.message }}
+                </div>
+
                 <form class="mb-5" @submit.prevent="updateTask">
                     <div class="grid grid-cols-5 gap-4">
-                        <div class="col-span-3 mx-16 h-24">
+                        <div class="col-span-3 mx-16 h-24 my-5">
                             <div>
 
                                 <div class="my-3">
@@ -147,7 +153,7 @@ const formattedDate = `${day}-${month}-${year}`;
 
                         </div>
 
-                        <div class="col-span-2 h-24">
+                        <div class="col-span-2 h-24 my-5">
                             <div>
                                 <div class="mr-10">
                                     <InputLabel for="Comment" value="Comment" />

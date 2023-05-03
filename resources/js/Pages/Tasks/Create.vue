@@ -8,6 +8,8 @@ import PrimaryButton from '@/Components/PrimaryButton.vue';
 import TextInput from '@/Components/TextInput.vue';
 import { Link } from '@inertiajs/vue3'
 import { ref } from "vue";
+import { defineProps } from 'vue';
+
 const form = useForm({
     assign_to: '',
     title: '',
@@ -31,6 +33,15 @@ const props = defineProps({
 function insert() {
     form.post(route('tasks.store'), {
         forceFormData: true
+    }, {
+        onSuccess: () => {
+            // reload the page
+            // location.reload();
+            // router.visit('/tasks');
+            setTimeout(() => {
+                router.visit('/tasks');
+            }, 500);
+        },
     })
 }
 
@@ -42,6 +53,7 @@ function insert() {
                 <div class="w-full flex justify-center">
                     <h3 class="text-lg font-bold uppercase mt-5 mb-5">Insert Tast</h3>
                 </div>
+
                 <!-- {{ props.usersList }} -->
                 <div class="w-full flex justify-center">
                     <div class="">
@@ -49,7 +61,8 @@ function insert() {
                             <div>
                                 <div>
                                     <InputLabel for="assign_to" value="Assign To" />
-                                    <select v-model="form.assign_to" id="assign_to" class="border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm mt-1 block w-full mb-2">
+                                    <select v-model="form.assign_to" id="assign_to"
+                                        class="border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm mt-1 block w-full mb-2">
                                         <option selected disabled>Choose a User</option>
                                         <option v-for="user in props.users" :key="user.id" :value="user.id">{{ user.name }}
                                         </option>
@@ -73,7 +86,8 @@ function insert() {
 
                                 <div>
                                     <InputLabel for="Status" value="Status" />
-                                    <select v-model="form.status_id" id="status_id" class="border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm mt-1 block w-full mb-2">
+                                    <select v-model="form.status_id" id="status_id"
+                                        class="border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm mt-1 block w-full mb-2">
                                         <option selected disabled>Choose a Status</option>
                                         <option v-for="status in statuses" :key="status.id" :value="status.id">{{
                                             status.status }}</option>

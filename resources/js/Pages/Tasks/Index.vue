@@ -3,6 +3,7 @@
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import { Link, router } from '@inertiajs/vue3'
 import { ref } from "vue";
+import { defineProps } from 'vue';
 
 const props = defineProps({
     tasks: Object,
@@ -19,14 +20,26 @@ const tableData = ref(props.tasks);
 
 function deleteItem(id) {
     router.delete(route('tasks.destroy', { task: id }), {
-  onBefore: () => confirm('Are you sure you want to delete this task?'),
-  onSuccess: () => {
-    // reload the page
-    // location.reload();
-    router.visit('/tasks');
-  },
-});
+        onBefore: () => confirm('Are you sure you want to delete this task?'),
+        onSuccess: () => {
+            // reload the page
+            // location.reload();
+            // router.visit('/tasks');
+            setTimeout(() => {
+                router.visit('/tasks');
+            }, 500);
+        },
+        onError: errors => {
+            router.on('error', (errors) => {
+                console.log(errors)
+            })
+        },
+    });
 }
+
+// setTimeout(function () {
+//     router.visit('/tasks');
+// }, 500);
 
 
 </script>
@@ -40,6 +53,11 @@ function deleteItem(id) {
                     Add Task
                     </Link>
                     <h3 class="inline text-lg font-bold uppercase mt-5 mb-5 ps-96">Task list</h3>
+                </div>
+
+                <div v-if="$page.props.flash.message"
+                    class="fixed top-24 left-1/2 transform -translate-x-1/2 -translate-y-1/2 h-10 w-72 flex justify-center items-center bg-green-600 text-white rounded-md shadow-lg">
+                    {{ $page.props.flash.message }}
                 </div>
 
 
@@ -133,10 +151,8 @@ function deleteItem(id) {
                                         class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">
                                     Edit</Link>
 
-                                    <!-- <Link :href="route('tasks.destroy', {task: task.id})"
-                                        class="focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900">delete</Link> -->
-
-                                    <button @click="deleteItem(task.id)">Delete</button>
+                                    <button @click="deleteItem(task.id)"
+                                        class="focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900">Delete</button>
                                 </td>
                             </tr>
                         </tbody>

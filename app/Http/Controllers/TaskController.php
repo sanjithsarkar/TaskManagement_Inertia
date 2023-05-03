@@ -9,11 +9,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
-use Carbon\Carbon;
 use Illuminate\Support\Facades\Storage;
-
-use function GuzzleHttp\Promise\task;
-use function Termwind\render;
 
 class TaskController extends Controller
 {
@@ -23,7 +19,7 @@ class TaskController extends Controller
     public function index()
     {
         $tasks = Task::with('assignBy', 'assignTo', 'status')->where('assign_by', Auth::user()->id)->orWhere('assign_to', Auth::user()->id)->get();
-        //dd($tasks->toArray());
+         //dd($tasks->toArray());
         return Inertia::render('Tasks/Index')->with('tasks', $tasks);
     }
 
@@ -64,7 +60,7 @@ class TaskController extends Controller
             'status_id' => $request->status_id
         ]);
 
-        return redirect(route('tasks.index'));
+        return redirect(route('tasks.index'))->with('message', 'Task Inserted successfully');
     }
 
     /**
@@ -127,6 +123,8 @@ class TaskController extends Controller
                 $comment->save();
             }
 
+             session()->flash('message', 'Task Updated successfully');
+
             return redirect()->back();
         } else {
 
@@ -147,6 +145,8 @@ class TaskController extends Controller
                 $comment->save();
             }
 
+            session()->flash('message', 'Task updated successfully');
+
             return redirect()->back();
         }
     }
@@ -160,9 +160,15 @@ class TaskController extends Controller
         if ($image) {
             unlink(storage_path('app/public/' . $image));
             $task->delete();
+
+            session()->flash('message', 'Task Deleted successfully');
+
             return redirect()->route('tasks.index');
         }else{
             $task->delete();
+
+            session()->flash('message', 'Task Deleted successfully');
+
             return redirect()->route('tasks.index');
         }
     }
