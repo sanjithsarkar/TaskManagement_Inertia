@@ -185,9 +185,6 @@ const formattedDate = `${day}-${month}-${year}`;
                     </div>
                 </form>
             </div>
-
-
-
         </div>
     </div>
 </template>
