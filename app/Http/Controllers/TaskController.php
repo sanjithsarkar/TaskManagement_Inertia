@@ -10,7 +10,9 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Storage;
 
+use function GuzzleHttp\Promise\task;
 use function Termwind\render;
 
 class TaskController extends Controller
@@ -98,9 +100,12 @@ class TaskController extends Controller
 
         $filePath = '';
         if ($request->hasFile('file')) {
+            Storage::delete('public/' . $task->file);
+            // unlink(storage_path('app/public/' . $task->file));
             $fileName = time() . '_' . $request->file->getClientOriginalName();
             $filePath = $request->file('file')->storeAs('tasks', $fileName, 'public');
         }
+        //  dd($filePath);
 
         $comment = $request->comment;
         $file = $request->hasFile('file');
@@ -129,7 +134,6 @@ class TaskController extends Controller
             $data->title = $request->title;
             $data->description = $request->description;
             $data->status_id = $request->status_id;
-            $data->assign_to = $request->assign_to;
             $data->file = $filePath;
             $data->deadline = $request->deadline;
             $data->save();
@@ -152,11 +156,14 @@ class TaskController extends Controller
      */
     public function destroy(Task $task)
     {
-        //
+        $image = $task->file;
+        if ($image) {
+            unlink(storage_path('app/public/' . $image));
+            $task->delete();
+            return redirect()->route('tasks.index');
+        }else{
+            $task->delete();
+            return redirect()->route('tasks.index');
+        }
     }
-
-    //    public function viewComment(){
-    //         $comments = Comment::all();
-    //         return Inertia::render('tasks.edit')->with('comments', $comments);
-    //     } 
 }

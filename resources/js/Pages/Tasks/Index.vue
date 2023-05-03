@@ -1,7 +1,7 @@
 
 <script setup>
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
-import { Link } from '@inertiajs/vue3'
+import { Link, router } from '@inertiajs/vue3'
 import { ref } from "vue";
 
 const props = defineProps({
@@ -11,13 +11,32 @@ const props = defineProps({
 // console.log(props.tasks);
 
 const tableData = ref(props.tasks);
+
+
+// function deleteItem(id) {
+//     this.$inertia.delete(route('tasks.destroy', { task: id }));
+// }
+
+function deleteItem(id) {
+    router.delete(route('tasks.destroy', { task: id }), {
+  onBefore: () => confirm('Are you sure you want to delete this task?'),
+  onSuccess: () => {
+    // reload the page
+    // location.reload();
+    router.visit('/tasks');
+  },
+});
+}
+
+
 </script>
 <template>
     <AuthenticatedLayout>
         <div class="w-full flex justify-center">
             <div class="sm:w-full lg:w-10/12 shadow-md bg-white rounded border">
                 <div class="w-full my-6">
-                    <Link :href="route('tasks.create')" class="ml-16 text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-6 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">
+                    <Link :href="route('tasks.create')"
+                        class="ml-16 text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-6 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">
                     Add Task
                     </Link>
                     <h3 class="inline text-lg font-bold uppercase mt-5 mb-5 ps-96">Task list</h3>
@@ -77,8 +96,9 @@ const tableData = ref(props.tasks);
                             </tr>
                         </thead>
                         <tbody>
-                        
-                            <tr v-for="task of tableData" :key="task.id" class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+
+                            <tr v-for="task of tableData" :key="task.id"
+                                class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
                                 <th scope="row"
                                     class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
                                     {{ task.assign_to.name }}
@@ -98,7 +118,8 @@ const tableData = ref(props.tasks);
                                     {{ task.description }}
                                 </td>
                                 <td class="px-6 py-4">
-                                    <img v-if="task.file != ''" :src="route('home') + '/storage/' + task.file" class="w-20 h-20 rounded-lg shadow" alt="No Image">
+                                    <img v-if="task.file != ''" :src="route('home') + '/storage/' + task.file"
+                                        class="w-20 h-20 rounded-lg shadow" alt="No Image">
                                     <span v-else>No Image</span>
                                 </td>
                                 <td class="px-6 py-4">
@@ -108,11 +129,14 @@ const tableData = ref(props.tasks);
                                     <!-- <Link href="#"
                                         class="focus:outline-none text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800">View</Link> -->
 
-                                    <Link :href="route('tasks.edit', {task: task.id})"
-                                        class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">Edit</Link>
+                                    <Link :href="route('tasks.edit', { task: task.id })"
+                                        class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">
+                                    Edit</Link>
 
-                                    <Link :href="route('tasks.destroy', {task: task.id})"
-                                        class="focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900">delete</Link>
+                                    <!-- <Link :href="route('tasks.destroy', {task: task.id})"
+                                        class="focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900">delete</Link> -->
+
+                                    <button @click="deleteItem(task.id)">Delete</button>
                                 </td>
                             </tr>
                         </tbody>
