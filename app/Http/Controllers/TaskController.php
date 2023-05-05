@@ -18,8 +18,8 @@ class TaskController extends Controller
      */
     public function index()
     {
-        $tasks = Task::with('assignBy', 'assignTo', 'status')->where('assign_by', Auth::user()->id)->orWhere('assign_to', Auth::user()->id)->get();
-         //dd($tasks->toArray());
+        $tasks = Task::with('assignBy', 'assignTo', 'status')->where('assign_by', Auth::user()->id)->orWhere('assign_to', Auth::user()->id)->paginate(2);
+        //  dd($tasks->toArray());
         return Inertia::render('Tasks/Index')->with('tasks', $tasks);
     }
 

@@ -3,7 +3,10 @@
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import { Link, router } from '@inertiajs/vue3'
 import { ref } from "vue";
-import { defineProps } from 'vue';
+import { defineProps, onMounted } from 'vue';
+import { usePage } from "@inertiajs/vue3";
+import Pagination from '@/Components/Pagination/Pagination.vue';
+
 
 const props = defineProps({
     tasks: Object,
@@ -11,7 +14,7 @@ const props = defineProps({
 
 // console.log(props.tasks);
 
-const tableData = ref(props.tasks);
+ const tableData = ref(props.tasks);
 
 
 // function deleteItem(id) {
@@ -35,6 +38,10 @@ function deleteItem(id) {
             })
         },
     });
+}
+
+function getTasks(page) {
+    this.$inertia.get(`/tasks?page=${page}`)
 }
 
 // setTimeout(function () {
@@ -115,7 +122,7 @@ function deleteItem(id) {
                         </thead>
                         <tbody>
 
-                            <tr v-for="task of tableData" :key="task.id"
+                            <tr v-for="task of tableData.data" :key="task.id"
                                 class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
                                 <th scope="row"
                                     class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
@@ -157,6 +164,7 @@ function deleteItem(id) {
                             </tr>
                         </tbody>
                     </table>
+                    <Pagination class="mt-6" :links="tasks.links" />
                 </div>
 
             </div>
